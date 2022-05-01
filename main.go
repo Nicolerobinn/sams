@@ -91,21 +91,25 @@ func main() {
 			if v.FloorId == session.Conf.FloorId {
 				session.GoodsList = make([]dd.Goods, 0)
 				for _, goods := range v.NormalGoodsList {
-					if goods.StockQuantity <= goods.Quantity {
-						goods.Quantity = goods.StockQuantity
+					if goods.StockQuantity > 0 && goods.StockStatus && goods.IsPutOnSale && goods.IsAvailable {
+						if goods.StockQuantity <= goods.Quantity {
+							goods.Quantity = goods.StockQuantity
+						}
+						session.GoodsList = append(session.GoodsList, goods.ToGoods())
 					}
-					session.GoodsList = append(session.GoodsList, goods.ToGoods())
 				}
 
 				for _, goods := range v.ShortageStockGoodsList {
-					if goods.StockQuantity <= goods.Quantity {
-						goods.Quantity = goods.StockQuantity
+					if goods.StockQuantity > 0 && goods.StockStatus && goods.IsPutOnSale && goods.IsAvailable {
+						if goods.StockQuantity <= goods.Quantity {
+							goods.Quantity = goods.StockQuantity
+						}
+						session.GoodsList = append(session.GoodsList, goods.ToGoods())
 					}
-					session.GoodsList = append(session.GoodsList, goods.ToGoods())
 				}
 
 				for _, goods := range v.AllOutOfStockGoodsList {
-					if goods.StockQuantity > 0 {
+					if goods.StockQuantity > 0 && goods.StockStatus && goods.IsPutOnSale && goods.IsAvailable {
 						if goods.StockQuantity <= goods.Quantity {
 							goods.Quantity = goods.StockQuantity
 						}
